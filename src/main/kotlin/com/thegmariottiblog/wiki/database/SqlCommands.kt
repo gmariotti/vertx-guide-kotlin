@@ -1,4 +1,4 @@
-package com.thegmariottiblog
+package com.thegmariottiblog.wiki.database
 
 const val SQL_CREATE_PAGE_TABLE = """
     CREATE TABLE page (

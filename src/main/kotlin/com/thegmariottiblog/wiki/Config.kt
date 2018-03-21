@@ -1,4 +1,4 @@
-package com.thegmariottiblog
+package com.thegmariottiblog.wiki
 
 const val CONFIG_HTTP_SERVER_PORT = "http.server.port"
 const val CONFIG_WIKIDB_QUEUE = "wikidb.queue"

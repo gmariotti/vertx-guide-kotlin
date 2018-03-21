@@ -1,11 +1,19 @@
-package com.thegmariottiblog
+package com.thegmariottiblog.wiki.http
 
 import EMPTY_PAGE_MARKDOWN
 import com.github.rjeschke.txtmark.Processor
+import com.thegmariottiblog.wiki.CONFIG_HTTP_SERVER_PORT
+import com.thegmariottiblog.wiki.CONFIG_WIKIDB_QUEUE
+import com.thegmariottiblog.wiki.WIKIDB_QUEUE
+import com.thegmariottiblog.wiki.coroutineHandler
+import com.thegmariottiblog.wiki.database.WikiDatabaseService
+import com.thegmariottiblog.wiki.database.createProxy
+import io.vertx.core.AsyncResult
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.Message
 import io.vertx.core.http.HttpServer
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
@@ -19,10 +27,12 @@ import java.time.LocalDateTime
 
 class HttpServerVerticle : CoroutineVerticle() {
     private val templateEngine = FreeMarkerTemplateEngine.create()
+    private lateinit var dbService: WikiDatabaseService
     private lateinit var wikiDbQueue: String
 
     override suspend fun start() {
         wikiDbQueue = config.getString(CONFIG_WIKIDB_QUEUE, WIKIDB_QUEUE)
+        dbService = createProxy(vertx, wikiDbQueue)
 
         val server = vertx.createHttpServer()
 
@@ -48,13 +58,11 @@ class HttpServerVerticle : CoroutineVerticle() {
     }
 
     private suspend fun indexHandler(context: RoutingContext) {
-        val options = DeliveryOptions().addHeader("action", "all-pages")
-        val result = awaitResult<Message<JsonObject>> { vertx.eventBus().send(wikiDbQueue, JsonObject(), options, it) }
-            .body()
+        val result = awaitResult<JsonArray> { dbService.fetchAllPages(it) }
 
         with(context) {
             put("title", "Wiki home")
-            put("pages", result.getJsonArray("pages").list)
+            put("pages", result.list)
             val buffer = awaitResult<Buffer> {
                 templateEngine.render(
                     this,
@@ -70,13 +78,10 @@ class HttpServerVerticle : CoroutineVerticle() {
 
     private suspend fun pageRenderingHandler(context: RoutingContext) {
         val requestedPage = context.request().getParam("page")
-        val request = JsonObject().put("page", requestedPage)
-        val options = DeliveryOptions().addHeader("action", "get-page")
 
         log.info("rendering requestedPage=$requestedPage")
 
-        val result = awaitResult<Message<JsonObject>> { vertx.eventBus().send(wikiDbQueue, request, options, it) }
-            .body()
+        val result = awaitResult<JsonObject> { dbService.fetchPage(requestedPage, it) }
         val found = result.getBoolean("found")
         val rawContent = result.getString("rawContent", EMPTY_PAGE_MARKDOWN)
         val id = result.getInteger("id", -1)
@@ -103,22 +108,15 @@ class HttpServerVerticle : CoroutineVerticle() {
     }
 
     private suspend fun pageUpdateHandler(context: RoutingContext) = with(context) {
-        val id = request().getParam("id")
+        val id = request().getParam("id").toInt()
         val title = request().getParam("title")
         val markdown = request().getParam("markdown")
         val newPage = "yes" == request().getParam("newPage")
 
         log.info("update page id=$id and title=$title")
 
-        val request = JsonObject()
-            .put("id", id)
-            .put("title", title)
-            .put("markdown", markdown)
-
-        val options = DeliveryOptions()
-            .addHeader("action", if (newPage) "create-page" else "save-page")
-
-        awaitResult<Message<Void>> { vertx().eventBus().send(wikiDbQueue, request, options, it) }
+        val result = if (newPage) awaitResult<Void> { dbService.createPage(title, markdown, it) }
+        else awaitResult { dbService.savePage(id, markdown, it) }
 
         response().setStatusCode(303)
             .putHeader("Location", "/wiki/$title")
@@ -137,14 +135,11 @@ class HttpServerVerticle : CoroutineVerticle() {
     }
 
     private suspend fun pageDeletionHandler(context: RoutingContext) {
-        val id = context.request().getParam("id")
+        val id = context.request().getParam("id").toInt()
 
         log.info("delete page with id=$id")
 
-        val request = JsonObject().put("id", id)
-        val options = DeliveryOptions().addHeader("action", "delete-page")
-
-        awaitResult<Message<Void>> { vertx.eventBus().send(wikiDbQueue, request, options, it) }
+        awaitResult<Void> { dbService.deletePage(id, it) }
 
         context.response()
             .setStatusCode(303)

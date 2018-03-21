@@ -14,6 +14,8 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.30"
 }
 
+apply plugin: "kotlin-kapt"
+
 group 'com.thegmariottiblog'
 version '1.0-SNAPSHOT'
 
@@ -28,16 +30,18 @@ repositories {
 
 dependencies {
     compile "ch.qos.logback:logback-classic:1.2.3"
-    compile "ch.vorburger.mariaDB4j:mariaDB4j:2.2.3"
     compile "com.github.rjeschke:txtmark:0.13"
+    compile "io.vertx:vertx-codegen"
     compile "io.vertx:vertx-core"
     compile "io.vertx:vertx-lang-kotlin"
     compile "io.vertx:vertx-lang-kotlin-coroutines"
     compile "io.vertx:vertx-jdbc-client"
+    compile "io.vertx:vertx-service-proxy"
     compile "io.vertx:vertx-web"
     compile "io.vertx:vertx-web-templ-freemarker"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.mariadb.jdbc:mariadb-java-client:2.2.3"
+    kapt group: "io.vertx", name: "vertx-service-proxy", classifier: "processor"
 }
 
 compileKotlin {

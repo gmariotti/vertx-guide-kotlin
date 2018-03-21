@@ -1,6 +1,7 @@
-package com.thegmariottiblog
+package com.thegmariottiblog.wiki
 
-import ch.vorburger.mariadb4j.DB
+import com.thegmariottiblog.wiki.database.WikiDatabaseVerticle
+import com.thegmariottiblog.wiki.http.HttpServerVerticle
 import io.vertx.core.DeploymentOptions
 import io.vertx.ext.jdbc.JDBCClient
 import io.vertx.ext.sql.ResultSet
@@ -14,8 +15,6 @@ import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.experimental.launch
 
 class MainVerticle : CoroutineVerticle() {
-    private val db = DB.newEmbeddedDB(3306).also { it.start() }
-
     override suspend fun start() {
         initializeDatabase()
         awaitResult<String> { vertx.deployVerticle(WikiDatabaseVerticle(), it) }
@@ -37,10 +36,6 @@ class MainVerticle : CoroutineVerticle() {
         }).apply {
             awaitResult<ResultSet> { this.query("CREATE DATABASE IF NOT EXISTS db", it) }
         }.close()
-    }
-
-    override suspend fun stop() {
-        db.stop()
     }
 }
 
