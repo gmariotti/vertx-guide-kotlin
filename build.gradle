@@ -1,17 +1,15 @@
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.31'
+    ext.junit_version = '5.1.0'
 
     repositories {
         mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 plugins {
     id "io.vertx.vertx-plugin" version "0.0.8"
-    id "org.jetbrains.kotlin.jvm" version "1.2.30"
+    id "org.jetbrains.kotlin.jvm" version "1.2.31"
 }
 
 apply plugin: "kotlin-kapt"
@@ -21,6 +19,18 @@ version '1.0-SNAPSHOT'
 
 vertx {
     mainVerticle = "com.thegmariottiblog.MainVerticle"
+}
+
+sourceSets {
+    test.java.srcDirs += "src/test/kotlin"
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 repositories {
@@ -36,11 +46,18 @@ dependencies {
     compile "io.vertx:vertx-lang-kotlin"
     compile "io.vertx:vertx-lang-kotlin-coroutines"
     compile "io.vertx:vertx-jdbc-client"
+    compile "io.vertx:vertx-junit5"
     compile "io.vertx:vertx-service-proxy"
     compile "io.vertx:vertx-web"
     compile "io.vertx:vertx-web-templ-freemarker"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.mariadb.jdbc:mariadb-java-client:2.2.3"
+
+    testImplementation "ch.vorburger.mariaDB4j:mariaDB4j:2.2.3"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testRuntime "org.junit.platform:junit-platform-launcher:1.1.0"
+
     kapt group: "io.vertx", name: "vertx-service-proxy", classifier: "processor"
 }
 
