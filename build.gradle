@@ -49,6 +49,7 @@ dependencies {
     compile "io.vertx:vertx-junit5"
     compile "io.vertx:vertx-service-proxy"
     compile "io.vertx:vertx-web"
+    compile "io.vertx:vertx-web-client"
     compile "io.vertx:vertx-web-templ-freemarker"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.mariadb.jdbc:mariadb-java-client:2.2.3"

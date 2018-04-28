@@ -24,4 +24,7 @@ interface WikiDatabaseService {
 
     @Fluent
     fun deletePage(id: Int, resultHandler: Handler<AsyncResult<Void>>): WikiDatabaseService
+
+    @Fluent
+    fun fetchAllPagesData(resultHandler: Handler<AsyncResult<List<JsonObject>>>): WikiDatabaseService
 }

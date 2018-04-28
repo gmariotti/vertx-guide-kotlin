@@ -1,6 +1,7 @@
 package com.thegmariottiblog.wiki.database
 
 import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES
+import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES_DATA
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGE
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGES_TABLE
 import com.thegmariottiblog.wiki.database.SqlQuery.DELETE_PAGE
@@ -138,6 +139,18 @@ class WikiDatabaseServiceImpl(
                 throw delete.cause()
             }
             resultHandler.handle(Future.succeededFuture())
+        }
+        return this
+    }
+
+    override fun fetchAllPagesData(resultHandler: Handler<AsyncResult<List<JsonObject>>>): WikiDatabaseService {
+        launch(dispatcher) {
+            val allPagesData = awaitEvent<AsyncResult<ResultSet>> { dbClient.query(sqlQueries[ALL_PAGES_DATA], it) }
+            if (allPagesData.failed()) {
+                log.error("Database query error", allPagesData.cause())
+                throw allPagesData.cause()
+            }
+            resultHandler.handle(Future.succeededFuture(allPagesData.result().rows))
         }
         return this
     }

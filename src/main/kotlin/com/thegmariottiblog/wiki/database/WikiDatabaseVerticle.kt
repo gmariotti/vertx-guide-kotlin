@@ -5,6 +5,7 @@ import com.thegmariottiblog.wiki.CONFIG_WIKIDB_JDBC_URL
 import com.thegmariottiblog.wiki.CONFIG_WIKIDB_QUEUE
 import com.thegmariottiblog.wiki.CONFIG_WIKIDB_SQL_QUERIES_RESOURCE_FILE
 import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES
+import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES_DATA
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGE
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGES_TABLE
 import com.thegmariottiblog.wiki.database.SqlQuery.DELETE_PAGE
@@ -80,7 +81,8 @@ class WikiDatabaseVerticle : CoroutineVerticle() {
             GET_PAGE to queriesProps.getProperty("get-page"),
             CREATE_PAGE to queriesProps.getProperty("create-page"),
             SAVE_PAGE to queriesProps.getProperty("save-page"),
-            DELETE_PAGE to queriesProps.getProperty("delete-page")
+            DELETE_PAGE to queriesProps.getProperty("delete-page"),
+            ALL_PAGES_DATA to queriesProps.getProperty("all-pages-data")
         )
     }
 

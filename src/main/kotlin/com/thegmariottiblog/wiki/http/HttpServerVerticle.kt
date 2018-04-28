@@ -6,17 +6,18 @@ import com.thegmariottiblog.wiki.CONFIG_HTTP_SERVER_PORT
 import com.thegmariottiblog.wiki.CONFIG_WIKIDB_QUEUE
 import com.thegmariottiblog.wiki.WIKIDB_QUEUE
 import com.thegmariottiblog.wiki.coroutineHandler
-import com.thegmariottiblog.wiki.database.WikiDatabaseService
 import com.thegmariottiblog.wiki.database.createProxy
 import io.vertx.core.AsyncResult
 import io.vertx.core.buffer.Buffer
-import io.vertx.core.eventbus.DeliveryOptions
-import io.vertx.core.eventbus.Message
 import io.vertx.core.http.HttpServer
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.client.HttpResponse
+import io.vertx.ext.web.client.WebClient
+import io.vertx.ext.web.client.WebClientOptions
+import io.vertx.ext.web.codec.BodyCodec
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.templ.FreeMarkerTemplateEngine
 import io.vertx.kotlin.coroutines.CoroutineVerticle
@@ -27,13 +28,12 @@ import java.time.LocalDateTime
 
 class HttpServerVerticle : CoroutineVerticle() {
     private val templateEngine = FreeMarkerTemplateEngine.create()
-    private lateinit var dbService: WikiDatabaseService
-    private lateinit var wikiDbQueue: String
+    private val wikiDbQueue by lazy { config.getString(CONFIG_WIKIDB_QUEUE, WIKIDB_QUEUE) }
+    private val dbService by lazy { createProxy(vertx, wikiDbQueue) }
+    private val webClient by lazy { WebClient.create(vertx, WebClientOptions().setSsl(true).setUserAgent("vert-x3")) }
+    private val githubToken: String? = System.getenv("GITHUB_TOKEN")
 
     override suspend fun start() {
-        wikiDbQueue = config.getString(CONFIG_WIKIDB_QUEUE, WIKIDB_QUEUE)
-        dbService = createProxy(vertx, wikiDbQueue)
-
         val server = vertx.createHttpServer()
 
         val router = Router.router(vertx)
@@ -43,6 +43,7 @@ class HttpServerVerticle : CoroutineVerticle() {
         router.post("/save") coroutineHandler { pageUpdateHandler(it) }
         router.post("/create") coroutineHandler { pageCreateHandler(it) }
         router.post("/delete") coroutineHandler { pageDeletionHandler(it) }
+        router.get("/backup") coroutineHandler { backupHandler(it) }
         router.get("/ping") coroutineHandler { getPing(it) }
 
         val portNumber = config.getInteger(CONFIG_HTTP_SERVER_PORT, 8080)
@@ -54,7 +55,6 @@ class HttpServerVerticle : CoroutineVerticle() {
                     else log.error("Could not start a HTTP server", it.cause())
                 }
         }
-
     }
 
     private suspend fun indexHandler(context: RoutingContext) {
@@ -145,6 +145,51 @@ class HttpServerVerticle : CoroutineVerticle() {
             .setStatusCode(303)
             .putHeader("Location", "/")
             .end()
+    }
+
+    private suspend fun backupHandler(context: RoutingContext) = githubToken?.let {
+        val allPagesData = awaitResult<List<JsonObject>> { dbService.fetchAllPagesData(it) }
+        val filesObject = JsonObject()
+        val gistPayload = JsonObject()
+            .put("files", filesObject)
+            .put("description", "A wiki backup")
+            .put("public", true)
+
+        allPagesData.forEach {
+            val fileObject = JsonObject().put("content", it.getString("content"))
+            filesObject.put(it.getString("name"), fileObject)
+        }
+
+        val request = awaitEvent<AsyncResult<HttpResponse<JsonObject>>> {
+            webClient.post(443, "api.github.com", "/gists")
+                .putHeader("Accept", "application/vnd.github.v3+json")
+                .putHeader("Authorization", "token $githubToken")
+                .putHeader("Content-Type", "application/json")
+                .`as`(BodyCodec.jsonObject())
+                .sendJsonObject(gistPayload, it)
+        }
+        if (request.failed()) {
+            log.error("HTTP client error", request.cause())
+            throw request.cause()
+        }
+        val response = request.result()
+        if (response.statusCode() == 201) {
+            context.put("backup_gist_url", response.body().getString("html_url"))
+            indexHandler(context)
+        } else {
+            log.error(buildString {
+                append("Could not backup the wiki: ")
+                append(response.statusCode())
+                response.body()?.let {
+                    append(System.getProperty("line.separator"))
+                    append(it.encodePrettily())
+                }
+            })
+            context.fail(502)
+        }
+    } ?: run {
+        log.warn("Impossible to perform backup without a GITHUB_TOKEN")
+        context.fail(502)
     }
 
     private fun getPing(context: RoutingContext) = context
