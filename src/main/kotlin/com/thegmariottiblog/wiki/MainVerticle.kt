@@ -5,14 +5,10 @@ import com.thegmariottiblog.wiki.http.HttpServerVerticle
 import io.vertx.core.DeploymentOptions
 import io.vertx.ext.jdbc.JDBCClient
 import io.vertx.ext.sql.ResultSet
-import io.vertx.ext.web.Route
-import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
-import io.vertx.kotlin.coroutines.dispatcher
-import kotlinx.coroutines.experimental.launch
 
 class MainVerticle : CoroutineVerticle() {
     override suspend fun start() {
@@ -36,20 +32,5 @@ class MainVerticle : CoroutineVerticle() {
         }).apply {
             awaitResult<ResultSet> { this.query("CREATE DATABASE IF NOT EXISTS db", it) }
         }.close()
-    }
-}
-
-/**
- * An extension method for simplifying coroutines usage with Vert.x Web routers
- */
-infix fun Route.coroutineHandler(fn: suspend (RoutingContext) -> Unit) {
-    handler { ctx ->
-        launch(ctx.vertx().dispatcher()) {
-            try {
-                fn(ctx)
-            } catch (e: Exception) {
-                ctx.fail(e)
-            }
-        }
     }
 }

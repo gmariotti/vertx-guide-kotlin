@@ -19,7 +19,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,7 +30,6 @@ class WikiDatabaseVerticleTest {
     private lateinit var service: WikiDatabaseService
 
     companion object {
-
         private val db by lazy { DB.newEmbeddedDB(0) }
         private val log = LoggerFactory.getLogger(WikiDatabaseVerticleTest::class.java)
 
@@ -66,7 +64,7 @@ class WikiDatabaseVerticleTest {
     }
 
     @AfterEach
-    fun `cleanup`(vertx: Vertx, vertxTestContext: VertxTestContext) = runBlocking {
+    fun cleanup(vertx: Vertx, vertxTestContext: VertxTestContext) = runBlocking {
         log.info { "...cleanup started..." }
         JDBCClient.createShared(vertx, json {
             obj(

@@ -1,15 +1,14 @@
 buildscript {
-    ext.kotlin_version = '1.2.31'
     ext.junit_version = '5.1.0'
 
     repositories {
-        mavenCentral()
+        jcenter()
     }
 }
 
 plugins {
     id "io.vertx.vertx-plugin" version "0.0.8"
-    id "org.jetbrains.kotlin.jvm" version "1.2.31"
+    id "org.jetbrains.kotlin.jvm" version "1.2.41"
 }
 
 apply plugin: "kotlin-kapt"
@@ -18,12 +17,12 @@ group 'com.thegmariottiblog'
 version '1.0-SNAPSHOT'
 
 vertx {
-    mainVerticle = "com.thegmariottiblog.MainVerticle"
+    mainVerticle = "com.thegmariottiblog.wiki.MainVerticle"
 }
 
-sourceSets {
-    test.java.srcDirs += "src/test/kotlin"
-}
+//sourceSets {
+//    test.java.srcDirs += "src/test/kotlin"
+//}
 
 test {
     useJUnitPlatform()
@@ -51,7 +50,7 @@ dependencies {
     compile "io.vertx:vertx-web"
     compile "io.vertx:vertx-web-client"
     compile "io.vertx:vertx-web-templ-freemarker"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.mariadb.jdbc:mariadb-java-client:2.2.3"
 
     testImplementation "ch.vorburger.mariaDB4j:mariaDB4j:2.2.3"

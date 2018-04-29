@@ -5,7 +5,8 @@ import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES_DATA
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGE
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGES_TABLE
 import com.thegmariottiblog.wiki.database.SqlQuery.DELETE_PAGE
-import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE
+import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE_ID
+import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE_NAME
 import com.thegmariottiblog.wiki.database.SqlQuery.SAVE_PAGE
 import io.vertx.core.AsyncResult
 import io.vertx.core.Future
@@ -71,7 +72,7 @@ class WikiDatabaseServiceImpl(
         launch(dispatcher) {
             val fetch = awaitEvent<AsyncResult<ResultSet>> {
                 dbClient.queryWithParams(
-                    sqlQueries[GET_PAGE],
+                    sqlQueries[GET_PAGE_NAME],
                     JsonArray().add(name),
                     it
                 )
@@ -87,6 +88,33 @@ class WikiDatabaseServiceImpl(
                 response.put("found", true)
                 val row = result.results[0]
                 response.put("id", row.getInteger(0))
+                response.put("rawContent", row.getString(1))
+            }
+            resultHandler.handle(Future.succeededFuture(response))
+        }
+        return this
+    }
+
+    override fun fetchPageById(id: Int, resultHandler: Handler<AsyncResult<JsonObject>>): WikiDatabaseService {
+        launch(dispatcher) {
+            val fetch = awaitEvent<AsyncResult<ResultSet>> {
+                dbClient.queryWithParams(
+                    sqlQueries[GET_PAGE_ID],
+                    JsonArray().add(id),
+                    it
+                )
+            }
+            if (fetch.failed()) {
+                log.error("Database query error", fetch.cause())
+                throw fetch.cause()
+            }
+            val response = JsonObject()
+            val result = fetch.result()
+            if (result.numRows == 0) response.put("found", false)
+            else {
+                response.put("found", true)
+                val row = result.results[0]
+                response.put("name", row.getString(0))
                 response.put("rawContent", row.getString(1))
             }
             resultHandler.handle(Future.succeededFuture(response))

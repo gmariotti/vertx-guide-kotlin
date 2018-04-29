@@ -41,6 +41,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="vertx-kotlin-examples_main" />
     <orderEntry type="module-library">
       <library name="Gradle: kaptGeneratedClasses">
         <CLASSES>
@@ -50,7 +51,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="vertx-kotlin-examples_main" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.2.3" level="project" />
     <orderEntry type="library" name="Gradle: com.github.rjeschke:txtmark:0.13" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-codegen:3.5.1" level="project" />
@@ -65,7 +65,7 @@
     <orderEntry type="library" name="Gradle: io.vertx:vertx-web-common:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-core:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-jdbc-client:3.5.1" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: org.mariadb.jdbc:mariadb-java-client:2.2.3" level="project" />
     <orderEntry type="library" name="Gradle: ch.vorburger.mariaDB4j:mariaDB4j:2.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.0.3" level="project" />
@@ -97,9 +97,9 @@
     <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-launcher:1.0.3" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-bridge-common:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: org.freemarker:freemarker:2.3.23" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.20" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: ch.vorburger.mariaDB4j:mariaDB4j-db-linux64:10.1.13" level="project" />
     <orderEntry type="library" name="Gradle: ch.vorburger.mariaDB4j:mariaDB4j-db-win32:10.1.20" level="project" />
     <orderEntry type="library" name="Gradle: ch.vorburger.mariaDB4j:mariaDB4j-db-mac64:10.1.9" level="project" />

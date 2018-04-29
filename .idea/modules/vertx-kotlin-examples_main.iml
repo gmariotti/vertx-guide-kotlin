@@ -64,7 +64,7 @@
     <orderEntry type="library" name="Gradle: io.vertx:vertx-web-common:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-core:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-jdbc-client:3.5.1" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: org.mariadb.jdbc:mariadb-java-client:2.2.3" level="project" />
     <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
@@ -92,9 +92,9 @@
     <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-launcher:1.0.3" level="project" />
     <orderEntry type="library" name="Gradle: io.vertx:vertx-bridge-common:3.5.1" level="project" />
     <orderEntry type="library" name="Gradle: org.freemarker:freemarker:2.3.23" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.20" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.31" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.41" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
     <orderEntry type="library" name="Gradle: com.mchange:mchange-commons-java:0.2.11" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-engine:1.0.3" level="project" />

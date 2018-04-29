@@ -8,7 +8,7 @@ Chapters list with corresponding tag:
 - [x] Chapter 4 - `chapter-4`
 - [x] Chapter 5 - `chapter-5`
 - [x] Chapter 6 - `chapter-6`
-- [ ] Chapter 7
+- [x] Chapter 7 - `chapter-7`
 - [ ] Chapter 8
 - [ ] Chapter 9
 - [ ] Chapter 10

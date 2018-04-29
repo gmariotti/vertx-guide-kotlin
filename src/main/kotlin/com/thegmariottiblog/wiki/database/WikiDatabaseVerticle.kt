@@ -9,7 +9,8 @@ import com.thegmariottiblog.wiki.database.SqlQuery.ALL_PAGES_DATA
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGE
 import com.thegmariottiblog.wiki.database.SqlQuery.CREATE_PAGES_TABLE
 import com.thegmariottiblog.wiki.database.SqlQuery.DELETE_PAGE
-import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE
+import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE_ID
+import com.thegmariottiblog.wiki.database.SqlQuery.GET_PAGE_NAME
 import com.thegmariottiblog.wiki.database.SqlQuery.SAVE_PAGE
 import io.vertx.core.AsyncResult
 import io.vertx.ext.jdbc.JDBCClient
@@ -78,7 +79,8 @@ class WikiDatabaseVerticle : CoroutineVerticle() {
         return mapOf(
             CREATE_PAGES_TABLE to queriesProps.getProperty("create-page-table"),
             ALL_PAGES to queriesProps.getProperty("all-pages"),
-            GET_PAGE to queriesProps.getProperty("get-page"),
+            GET_PAGE_NAME to queriesProps.getProperty("get-page-name"),
+            GET_PAGE_ID to queriesProps.getProperty("get-page-id"),
             CREATE_PAGE to queriesProps.getProperty("create-page"),
             SAVE_PAGE to queriesProps.getProperty("save-page"),
             DELETE_PAGE to queriesProps.getProperty("delete-page"),

@@ -17,6 +17,9 @@ interface WikiDatabaseService {
     fun fetchPage(name: String, resultHandler: Handler<AsyncResult<JsonObject>>): WikiDatabaseService
 
     @Fluent
+    fun fetchPageById(id: Int, resultHandler: Handler<AsyncResult<JsonObject>>): WikiDatabaseService
+
+    @Fluent
     fun createPage(title: String, markdown: String, resultHandler: Handler<AsyncResult<Void>>): WikiDatabaseService
 
     @Fluent
